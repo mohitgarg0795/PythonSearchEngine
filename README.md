@@ -9,4 +9,4 @@ Given the seed page url, the program takes a coule of minutes (usually 15-20 min
 
 On calculating all the results, user can make infinite number of single-word queries and the program displays the top results based on the search.
 
-The heart of the program lies in the algorthm used to fetch data and calculate results. The very famous Page Rank algorithm has been used in the program which was used by Google in its initial days. The results are sorted in decreasing order of their ranks calculated with their ranks displayed alongside.
+The heart of the program lies in the algorthm used to fetch data and calculate results. The very famous Page Rank algorithm has been used in the program which was used by Google in its initial days. The results are sorted in decreasing order of their ranks calculated with the ranks displayed alongside.
