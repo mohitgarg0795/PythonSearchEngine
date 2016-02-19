@@ -116,7 +116,7 @@ def crawl_web(page_url):
         links=links[1:]
         if(type(url)==int):
             #print level,start_time
-            if(url>2 and int(time.time()-start_time)>14*60):
+            if(url>2 and int(time.time()-start_time)>14*60):    #adjust the depth of graph (web) crawled - bfs depth
                 break
             level+=1
             links.append(level)
