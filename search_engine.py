@@ -4,14 +4,18 @@ start_time=0
 
 def get_page(url):
     try:
-        import mechanize as m
-        br=m.Browser()
-        br.set_handle_robots(False)
-        br.set_handle_refresh(False)
-        br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
+        import urllib2
 
-        response=br.open(url)
-        return response.read()
+        request_headers = {
+                "Accept-Language": "en-US,en;q=0.5",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Referer": "http://thewebsite.com",
+                "Connection": "keep-alive" 
+        }
+
+        request = urllib2.Request(url, headers=request_headers)
+        return urllib2.urlopen(request).read()
     except:
         return "error"
 
@@ -99,6 +103,8 @@ def display_time(time_taken):
         print sec,"seconds"
         
 def crawl_web(page_url):
+    global start_time
+
     links=[page_url]
     level=1
     links.append(level)
@@ -109,17 +115,21 @@ def crawl_web(page_url):
         url=links[0]
         links=links[1:]
         if(type(url)==int):
-            #print level
-            if(url>2 and time.time()-start_time>46800):  #check if time elapsed till now > 13 min
+            #print level,start_time
+            if(url>2 and int(time.time()-start_time)>14*60):
                 break
             level+=1
             links.append(level)
             continue
         crawled.append(url)
-        while(1):
+        flag=5
+        while(flag):
             text=get_page(url)      #html source code of the page
             if text!="error":       #check if page was sucessfully extracted/loaded
-                break               #else try till its not loaded properly
+                break               #else try (max 5 times) till its not loaded properly
+            flag-=1
+        if not flag:                #if page doesnt load , contains error
+            continue                #den ignore it
         add_to_index(index,text,url)
         new_links=get_all_links(text,links,crawled)
         #print time.time()-start_time, time.asctime( time.localtime(time.time()) )
@@ -139,13 +149,15 @@ def input_seedpage():
         print "\nCouldn't connect to web, please check the url entered or try again later\n"
 
 def lookup():
+    global start_time
+
     seed_url=input_seedpage()
     start_time=time.time()
     print "\nIt will take some time to fetch results, Please sit back and relax..."
     index_sorted,ranks=crawl_web(seed_url)
 
     print "Web Crawled and results processed Successfully !!"
-    print display_time(time.time()-start_time)
+    display_time(time.time()-start_time)
     
     while(1):
         word=raw_input("\nEnter the word to be searched : (-1 to exit) ")
